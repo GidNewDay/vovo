@@ -20,7 +20,7 @@ return new class extends Migration
             $table->float('rating')->default(0)->between(0, 5); // ограничение на уровне приложения
             $table->timestamps();
 
-            // Индекс для поиска LIKE по name (не ускорит сам LIKE '%...%', но для префикса поможет)
+            // Индекс для поиска LIKE по name
             $table->index('name');
             // Индекс для фильтрации по price и категории
             $table->index('price');
