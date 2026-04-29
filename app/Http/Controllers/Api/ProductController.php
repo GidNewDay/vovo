@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
@@ -13,6 +15,18 @@ class ProductController extends Controller
      */
     public function __invoke(Request $request)
     {
+        // Валидация параметров
+        $validated = $request->validate([
+            'q'            => 'nullable|string|max:255',
+            'price_from'   => 'nullable|numeric|min:0',
+            'price_to'     => 'nullable|numeric|min:0|gte:price_from',
+            'category_id'  => 'nullable|integer|exists:categories,id',
+            'in_stock'     => 'nullable|boolean',
+            'rating_from'  => 'nullable|numeric|min:0|max:5',
+            'sort'         => ['nullable', 'string', Rule::in(['price_asc', 'price_desc', 'rating_desc', 'newest'])],
+            'per_page'     => 'nullable|integer|min:1|max:100',
+        ]);
+        
         $query = Product::query();
 
         //1. Поиск по подстроке в названии (регистронезависимый)
